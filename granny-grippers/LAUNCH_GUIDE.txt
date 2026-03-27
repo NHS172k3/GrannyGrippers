@@ -1,0 +1,50 @@
+Granny Grippers - Launch Guide
+
+1. Open terminal in the granny-grippers folder.
+
+2. Install dependencies:
+   npm install
+
+3. Start Metro bundler:
+   npm start
+
+4. Android launch (recommended for BLE testing):
+   a) Build and install dev client:
+      npx expo run:android
+   b) Launch app through Metro:
+      npm run android
+
+5. iOS launch (macOS only):
+   a) Build and install dev client:
+      npx expo run:ios
+   b) Launch app through Metro:
+      npm run ios
+
+6. Optional web preview (UI only, no BLE):
+   npm run web
+
+Notes:
+- BLE does not work in standard Expo Go for this setup.
+- Use dev client builds for real BLE scan/connect/write behavior.
+
+If things break:
+- Clear Metro cache:
+  npx expo start -c
+- Rebuild native layer:
+  npx expo prebuild --clean
+
+Android build warning notes:
+- "Deprecated Gradle features were used" is usually a warning from dependencies,
+   not the root failure by itself.
+- If build still fails, rerun Gradle with full logs:
+   cd android
+   .\gradlew.bat app:assembleDebug -x lint -x test --warning-mode all --stacktrace --no-daemon
+
+Specific fix for this project (already applied):
+- If you see:
+   "A problem occurred evaluating project ':react-native-reanimated'"
+   "Process 'command 'node'' finished with non-zero exit value 1"
+   install missing dependency and rebuild:
+   npx expo install react-native-worklets
+   cd android
+   .\gradlew.bat app:assembleDebug -x lint -x test --no-daemon
