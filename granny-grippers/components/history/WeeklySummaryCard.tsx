@@ -18,24 +18,31 @@ export default function WeeklySummaryCard() {
 
   const { count, avgSeconds } = useMemo(() => {
     const startOfWeek = getWeekStart(new Date());
-    const weekSessions = sessions.filter((session) => new Date(session.startedAt) >= startOfWeek);
+    const weekSessions = sessions.filter((s) => new Date(s.startedAt) >= startOfWeek);
     const total = weekSessions.reduce((sum, s) => sum + s.durationSeconds, 0);
-    const avg = weekSessions.length > 0 ? Math.round(total / weekSessions.length) : 0;
-
+    const avg   = weekSessions.length > 0 ? Math.round(total / weekSessions.length) : 0;
     return { count: weekSessions.length, avgSeconds: avg };
   }, [sessions]);
 
   return (
     <Card className="mb-4">
-      <Text className="text-base font-nunito-bold text-text-primary">This Week</Text>
+      <Text className="text-base font-nunito-bold text-text-primary dark:text-dark-text-primary">
+        This Week
+      </Text>
       <View className="flex-row gap-3 mt-3">
-        <View className="flex-1 rounded-xl p-3 bg-brand-light border border-brand-border">
-          <Text className="text-xs font-nunito-semibold uppercase tracking-widest text-brand">Sessions</Text>
+        <View className="flex-1 rounded-xl p-3 bg-brand-light dark:bg-dark-brand-light border border-brand-border">
+          <Text className="text-xs font-nunito-semibold uppercase tracking-widest text-brand">
+            Sessions
+          </Text>
           <Text className="text-2xl font-nunito-bold text-brand mt-1">{count}</Text>
         </View>
-        <View className="flex-1 rounded-xl p-3 bg-surface-muted">
-          <Text className="text-xs font-nunito-semibold uppercase tracking-widest text-text-muted">Avg Duration</Text>
-          <Text className="text-2xl font-nunito-bold text-text-primary mt-1">{formatDuration(avgSeconds)}</Text>
+        <View className="flex-1 rounded-xl p-3 bg-surface-muted dark:bg-dark-surface-muted">
+          <Text className="text-xs font-nunito-semibold uppercase tracking-widest text-text-muted dark:text-dark-text-muted">
+            Avg Duration
+          </Text>
+          <Text className="text-2xl font-nunito-bold text-text-primary dark:text-dark-text-primary mt-1">
+            {formatDuration(avgSeconds)}
+          </Text>
         </View>
       </View>
     </Card>

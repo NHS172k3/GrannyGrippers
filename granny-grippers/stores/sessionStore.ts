@@ -54,8 +54,8 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       id: activeSession.id ?? Date.now().toString(),
       startedAt: activeSession.startedAt ?? new Date().toISOString(),
       durationSeconds: elapsedSeconds,
-      mode: activeSession.mode ?? null,
-      speed: activeSession.speed ?? null,
+      mainSpeed: activeSession.mainSpeed ?? null,
+      heelSpeed: activeSession.heelSpeed ?? null,
       pumpUsed: activeSession.pumpUsed ?? false,
     };
 

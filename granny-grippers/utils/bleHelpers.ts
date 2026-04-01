@@ -13,14 +13,12 @@ export function parseDeviceStatus(base64: string) {
     const json = decodeResponse(base64);
     const data = JSON.parse(json);
     return {
-      isRunning: Boolean(data.running),
-      mode: data.mode ?? null,
-      speed: data.speed ?? null,
+      mainSpeed: data.mainSpeed ?? null,
+      heelSpeed: data.heelSpeed ?? null,
       pumpActive: Boolean(data.pump),
       batteryLevel: typeof data.battery === 'number' ? data.battery : null,
     };
   } catch {
-    console.error('[BLE] Failed to parse device status');
     return null;
   }
 }

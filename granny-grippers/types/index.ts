@@ -1,21 +1,27 @@
-export type SpeedLevel = 'LOW' | 'MED' | 'HIGH';
-export type ModeType = 'SCRUB' | 'MASSAGE' | 'RINSE';
+export type MotorSpeed = 'OFF' | 'LOW' | 'MED' | 'HIGH';
 export type ConnectionState = 'disconnected' | 'scanning' | 'connecting' | 'connected';
 export type ColorVariant = 'success' | 'danger' | 'warning' | 'brand' | 'neutral';
+
+// Maps internal MotorSpeed values to consumer-friendly display strings
+export const SPEED_DISPLAY: Record<string, string> = {
+  OFF:  'Off',
+  LOW:  'Gentle',
+  MED:  'Standard',
+  HIGH: 'Power',
+};
 
 export interface Session {
   id: string;
   startedAt: string;
   durationSeconds: number;
-  mode: ModeType | null;
-  speed: SpeedLevel | null;
+  mainSpeed: MotorSpeed | null;
+  heelSpeed: MotorSpeed | null;
   pumpUsed: boolean;
 }
 
 export interface DeviceStatus {
-  isRunning: boolean;
-  speed: SpeedLevel | null;
-  mode: ModeType | null;
+  mainSpeed: MotorSpeed | null;
+  heelSpeed: MotorSpeed | null;
   pumpActive: boolean;
   batteryLevel: number | null;
 }
@@ -26,7 +32,7 @@ export interface ButtonDef {
   icon: string;
   command: string;
   colorVariant: ColorVariant;
-  section: 'power' | 'mode' | 'speed' | 'pump';
+  section: 'power' | 'program' | 'sole' | 'heel' | 'pump';
   isToggle?: boolean;
 }
 

@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import Card from '../ui/Card';
 import { useSessionStore } from '../../stores/sessionStore';
 import { formatDuration, getRelativeDateLabel } from '../../hooks/useSessions';
+import { SPEED_DISPLAY } from '../../types';
 
 export default function SessionLogList() {
   const sessions = useSessionStore((s) => s.sessions);
@@ -10,9 +11,7 @@ export default function SessionLogList() {
   const grouped = useMemo(() => {
     return sessions.reduce<Record<string, typeof sessions>>((acc, session) => {
       const key = getRelativeDateLabel(session.startedAt);
-      if (!acc[key]) {
-        acc[key] = [];
-      }
+      if (!acc[key]) acc[key] = [];
       acc[key].push(session);
       return acc;
     }, {});
@@ -22,34 +21,38 @@ export default function SessionLogList() {
 
   return (
     <View>
-      <Text className="text-xs font-nunito-bold uppercase tracking-widest text-text-muted mb-2 px-1">
+      <Text className="text-sm font-nunito-bold uppercase tracking-widest text-text-muted dark:text-dark-text-muted mb-3 px-1">
         Full History
       </Text>
       {labels.length === 0 ? (
         <Card>
-          <Text className="font-nunito-medium text-text-secondary">No session history yet.</Text>
+          <Text className="text-base font-nunito-medium text-text-primary dark:text-dark-text-primary">
+            No session history yet.
+          </Text>
         </Card>
       ) : (
         <View className="gap-3">
           {labels.map((label) => (
             <View key={label}>
-              <Text className="text-sm font-nunito-bold text-text-primary mb-2 px-1">{label}</Text>
+              <Text className="text-base font-nunito-bold text-text-primary dark:text-dark-text-primary mb-2 px-1">
+                {label}
+              </Text>
               <View className="gap-2">
                 {grouped[label].map((session) => (
                   <Card key={session.id}>
                     <View className="flex-row items-center justify-between">
-                      <View>
-                        <Text className="font-nunito-bold text-text-primary">
-                          {session.mode || 'Mode Unset'} / {session.speed || 'Speed Unset'}
+                      <View className="flex-1 mr-3">
+                        <Text className="text-base font-nunito-bold text-text-primary dark:text-dark-text-primary">
+                          Sole: {SPEED_DISPLAY[session.mainSpeed ?? 'OFF'] ?? 'Off'} · Heel: {SPEED_DISPLAY[session.heelSpeed ?? 'OFF'] ?? 'Off'}
                         </Text>
-                        <Text className="text-xs font-nunito-medium text-text-muted mt-1">
+                        <Text className="text-sm font-nunito-medium text-text-muted dark:text-dark-text-muted mt-1">
                           {new Date(session.startedAt).toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit',
                           })}
                         </Text>
                       </View>
-                      <Text className="font-nunito-bold text-brand">
+                      <Text className="text-lg font-nunito-bold text-brand">
                         {formatDuration(session.durationSeconds)}
                       </Text>
                     </View>

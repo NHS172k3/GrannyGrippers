@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, useColorScheme } from 'react-native';
 import { Bar, CartesianChart } from 'victory-native';
 import Card from '../ui/Card';
 import { useSessionStore } from '../../stores/sessionStore';
-import { COLORS } from '../../constants/theme';
+import { COLORS, DARK_COLORS } from '../../constants/theme';
 
 function formatDay(date: Date): string {
   return date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -11,6 +11,7 @@ function formatDay(date: Date): string {
 
 export default function SessionBarChart() {
   const sessions = useSessionStore((s) => s.sessions);
+  const t = useColorScheme() === 'dark' ? DARK_COLORS : COLORS;
 
   const data = useMemo(() => {
     const today = new Date();
@@ -19,7 +20,7 @@ export default function SessionBarChart() {
     for (let i = 6; i >= 0; i--) {
       const day = new Date(today);
       day.setDate(today.getDate() - i);
-      const key = day.toDateString();
+      const key   = day.toDateString();
       const count = sessions.filter((s) => new Date(s.startedAt).toDateString() === key).length;
       items.push({ x: formatDay(day), y: count });
     }
@@ -29,23 +30,22 @@ export default function SessionBarChart() {
 
   return (
     <Card className="mb-4">
-      <Text className="text-base font-nunito-bold text-text-primary mb-2">Sessions Per Day</Text>
-      <View className="h-[220px]">
+      <Text className="text-base font-nunito-bold text-text-primary dark:text-dark-text-primary mb-2">
+        Sessions Per Day
+      </Text>
+      <View className="h-[200px]">
         <CartesianChart
           data={data}
           xKey="x"
           yKeys={['y']}
           domainPadding={{ left: 22, right: 22, top: 16, bottom: 8 }}
-          axisOptions={{
-            font: undefined,
-            labelColor: COLORS.textMuted,
-          }}
+          axisOptions={{ labelColor: t.textMuted }}
         >
           {({ points, chartBounds }) => (
             <Bar
               points={points.y}
               chartBounds={chartBounds}
-              color={COLORS.brand}
+              color={t.brand}
               roundedCorners={{ topLeft: 6, topRight: 6 }}
             />
           )}

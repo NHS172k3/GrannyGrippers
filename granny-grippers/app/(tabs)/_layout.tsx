@@ -1,7 +1,8 @@
 import React from 'react';
+import { Text, useColorScheme } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/theme';
+import { COLORS, DARK_COLORS } from '../../constants/theme';
 
 type TabIcon = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -11,73 +12,65 @@ const TAB_CONFIG: {
   iconActive: TabIcon;
   iconInactive: TabIcon;
 }[] = [
-  { name: 'home', title: 'Home', iconActive: 'home', iconInactive: 'home-outline' },
-  { name: 'control', title: 'Control', iconActive: 'game-controller', iconInactive: 'game-controller-outline' },
-  { name: 'history', title: 'History', iconActive: 'time', iconInactive: 'time-outline' },
-  { name: 'settings', title: 'Settings', iconActive: 'settings-sharp', iconInactive: 'settings-outline' },
+  { name: 'home',     title: 'Home',     iconActive: 'home',            iconInactive: 'home-outline'            },
+  { name: 'control',  title: 'Control',  iconActive: 'game-controller', iconInactive: 'game-controller-outline' },
+  { name: 'history',  title: 'History',  iconActive: 'time',            iconInactive: 'time-outline'            },
+  { name: 'settings', title: 'Settings', iconActive: 'settings-sharp',  iconInactive: 'settings-outline'        },
 ];
 
-function TabIconRenderer({
-  focused,
-  color,
-  size,
-  iconActive,
-  iconInactive,
-}: Readonly<{
-  focused: boolean;
-  color: string;
-  size: number;
-  iconActive: TabIcon;
-  iconInactive: TabIcon;
-}>) {
-  return <Ionicons name={focused ? iconActive : iconInactive} size={size} color={color} />;
-}
-
-function renderTabBarIcon(iconActive: TabIcon, iconInactive: TabIcon) {
-  return ({ focused, color, size }: { focused: boolean; color: string; size: number }) => (
-    <TabIconRenderer
-      focused={focused}
-      color={color}
-      size={size}
-      iconActive={iconActive}
-      iconInactive={iconInactive}
-    />
-  );
-}
-
-const TAB_SCREENS = TAB_CONFIG.map((tab) => ({
-  ...tab,
-  options: {
-    title: tab.title,
-    tabBarIcon: renderTabBarIcon(tab.iconActive, tab.iconInactive),
-  },
-}));
-
 export default function TabLayout() {
+  const isDark = useColorScheme() === 'dark';
+  const t      = isDark ? DARK_COLORS : COLORS;
+
+  const activeColor   = t.brand;
+  // Hard near-black/near-white — never rely on textSecondary which is too muted
+  const inactiveColor = isDark ? '#F5F0E8' : '#1A140C';
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: COLORS.brand,
-        tabBarInactiveTintColor: COLORS.textMuted,
+        tabBarActiveTintColor:   activeColor,
+        tabBarInactiveTintColor: inactiveColor,
         tabBarStyle: {
-          backgroundColor: COLORS.surface,
-          borderTopColor: COLORS.border,
-          height: 88,
-          paddingBottom: 28,
-          paddingTop: 8,
-        },
-        tabBarLabelStyle: {
-          fontFamily: 'Nunito_500Medium',
-          fontSize: 11,
+          backgroundColor: t.surface,
+          borderTopWidth:  1,
+          borderTopColor:  t.border,
+          paddingTop:      6,
+          paddingBottom:   6,
+          marginBottom:    12,
         },
       }}
     >
-      {TAB_SCREENS.map((tab) => (
+      {TAB_CONFIG.map((tab) => (
         <Tabs.Screen
           key={tab.name}
           name={tab.name}
-          options={tab.options}
+          options={{
+            title: tab.title,
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons
+                name={focused ? tab.iconActive : tab.iconInactive}
+                size={26}
+                color={color}
+              />
+            ),
+            // Explicit label component so color is guaranteed — avoids tint color being
+            // silently overridden by tabBarLabelStyle on some RN/Expo Router versions
+            tabBarLabel: ({ focused }) => (
+              <Text
+                style={{
+                  fontFamily: 'Nunito_700Bold',
+                  fontSize:   12,
+                  color:      focused ? activeColor : inactiveColor,
+                  marginTop:  2,
+                  marginBottom: 2,
+                }}
+              >
+                {tab.title}
+              </Text>
+            ),
+          }}
         />
       ))}
     </Tabs>

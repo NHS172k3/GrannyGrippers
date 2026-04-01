@@ -8,7 +8,7 @@ import SessionLogList from '../../components/history/SessionLogList';
 
 export default function HistoryTab() {
   return (
-    <SafeAreaView className="flex-1 bg-gg-bg">
+    <SafeAreaView className="flex-1 bg-gg-bg dark:bg-dark-bg" edges={['top']}>
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 36 }}>
         <GGHeader title="History" subtitle="Track your sessions" />
         <WeeklySummaryCard />

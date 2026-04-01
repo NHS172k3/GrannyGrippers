@@ -12,6 +12,7 @@ interface BleState {
   connectedDevice: Device | null;
   isConnected: boolean;
   isScanning: boolean;
+  scanError: string | null;
   rssi: number | null;
   discoveredDevices: Device[];
   deviceStatus: DeviceStatus;
@@ -19,6 +20,7 @@ interface BleState {
   setRssi: (rssi: number | null) => void;
   setConnectedDevice: (device: Device | null) => void;
   setScanning: (scanning: boolean) => void;
+  setScanError: (error: string | null) => void;
   setDeviceStatus: (status: Partial<DeviceStatus>) => void;
   addDiscoveredDevice: (device: Device) => void;
   clearDiscoveredDevices: () => void;
@@ -29,9 +31,8 @@ interface BleState {
 }
 
 const defaultStatus: DeviceStatus = {
-  isRunning: false,
-  speed: null,
-  mode: null,
+  mainSpeed: null,
+  heelSpeed: null,
   pumpActive: false,
   batteryLevel: null,
 };
@@ -41,6 +42,7 @@ export const useBleStore = create<BleState>((set, get) => ({
   connectedDevice: null,
   isConnected: false,
   isScanning: false,
+  scanError: null,
   rssi: null,
   discoveredDevices: [],
   deviceStatus: defaultStatus,
@@ -48,6 +50,8 @@ export const useBleStore = create<BleState>((set, get) => ({
   setManager: (manager) => set({ manager }),
 
   setRssi: (rssi) => set({ rssi }),
+
+  setScanError: (error) => set({ scanError: error }),
 
   setConnectedDevice: (device) =>
     set({ connectedDevice: device, isConnected: !!device }),

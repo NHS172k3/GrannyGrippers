@@ -12,30 +12,32 @@ export default function DeviceInfoCard({ onConnectPress }: Readonly<Props>) {
 
   return (
     <Card className="mb-4">
-      <Text className="text-base font-nunito-bold text-text-primary mb-3">Paired Device</Text>
+      <Text className="text-base font-nunito-bold text-text-primary dark:text-dark-text-primary mb-3">
+        Paired Device
+      </Text>
 
       <View className="gap-2">
         <View className="flex-row items-center justify-between">
-          <Text className="font-nunito-medium text-text-secondary">Name</Text>
-          <Text className="font-nunito-semibold text-text-primary">
+          <Text className="font-nunito-medium text-text-secondary dark:text-dark-text-secondary">Name</Text>
+          <Text className="font-nunito-semibold text-text-primary dark:text-dark-text-primary">
             {connectedDevice?.name || connectedDevice?.localName || 'Not paired'}
           </Text>
         </View>
 
         <View className="flex-row items-center justify-between">
-          <Text className="font-nunito-medium text-text-secondary">Model</Text>
-          <Text className="font-nunito-semibold text-text-primary">GG-ESP32</Text>
+          <Text className="font-nunito-medium text-text-secondary dark:text-dark-text-secondary">Model</Text>
+          <Text className="font-nunito-semibold text-text-primary dark:text-dark-text-primary">GG-ESP32</Text>
         </View>
 
         <View className="flex-row items-center justify-between">
-          <Text className="font-nunito-medium text-text-secondary">Firmware</Text>
-          <Text className="font-nunito-semibold text-text-primary">v1.0.0</Text>
+          <Text className="font-nunito-medium text-text-secondary dark:text-dark-text-secondary">Firmware</Text>
+          <Text className="font-nunito-semibold text-text-primary dark:text-dark-text-primary">v1.0.0</Text>
         </View>
 
         <View className="flex-row items-center justify-between">
-          <Text className="font-nunito-medium text-text-secondary">RSSI</Text>
-          <Text className="font-nunito-semibold text-text-primary">
-            {isConnected && typeof rssi === 'number' ? `${rssi} dBm` : '--'}
+          <Text className="font-nunito-medium text-text-secondary dark:text-dark-text-secondary">Signal</Text>
+          <Text className="font-nunito-semibold text-text-primary dark:text-dark-text-primary">
+            {isConnected && typeof rssi === 'number' ? `${rssi} dBm` : '—'}
           </Text>
         </View>
       </View>

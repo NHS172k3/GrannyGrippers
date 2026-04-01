@@ -25,15 +25,12 @@ async function requestPermissions() {
         (r) => r === PermissionsAndroid.RESULTS.GRANTED
       );
       if (!allGranted) {
-        console.warn('[BLE] Some permissions were not granted');
+        // permissions not granted — BLE scan will fail gracefully via setScanError
       }
     } else {
-      const granted = await PermissionsAndroid.request(
+      await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
       );
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        console.warn('[BLE] Location permission not granted');
-      }
     }
   }
 }
@@ -101,11 +98,12 @@ export default function BleProvider({ children }: Readonly<Props>) {
       const device = await manager.connectToDevice(lastDeviceId, { timeout: 12000 });
       await onDeviceConnected(device, true);
     } catch {
-      console.log('[BLE] Auto-reconnect failed');
+      // auto-reconnect failed silently — user can manually reconnect via Settings
     }
   }
 
   async function onDeviceConnected(device: Device, preserveRetryState = false) {
+    try { await device.requestMTU(512); } catch { /* MTU negotiation optional */ }
     await device.discoverAllServicesAndCharacteristics();
     useBleStore.getState().setConnectedDevice(device);
     await setLastDeviceId(device.id);
@@ -144,10 +142,7 @@ export default function BleProvider({ children }: Readonly<Props>) {
       BLE_CONFIG.SERVICE_UUID,
       BLE_CONFIG.CHARACTERISTIC_UUID_RX,
       (error, characteristic) => {
-        if (error) {
-          console.error('[BLE] Monitor error:', error.message);
-          return;
-        }
+        if (error) return;
         if (characteristic?.value) {
           const status = parseDeviceStatus(characteristic.value);
           if (status) {
@@ -159,8 +154,7 @@ export default function BleProvider({ children }: Readonly<Props>) {
 
     // Listen for disconnection
     disconnectSubscription.current?.remove();
-    disconnectSubscription.current = device.onDisconnected((error) => {
-      console.log('[BLE] Device disconnected', error?.message);
+    disconnectSubscription.current = device.onDisconnected(() => {
       useBleStore.getState().setConnectedDevice(null);
       useBleStore.getState().setRssi(null);
       monitorSubscription.current?.remove();
@@ -186,11 +180,19 @@ export default function BleProvider({ children }: Readonly<Props>) {
 
 // Exported for use by DeviceScanner
 export async function scanForDevices() {
-  const { manager, setScanning, addDiscoveredDevice, clearDiscoveredDevices } =
+  const { manager, setScanning, setScanError, addDiscoveredDevice, clearDiscoveredDevices } =
     useBleStore.getState();
   if (!manager) return;
 
+  // Check BLE state before attempting scan
+  const bleState = await manager.state();
+  if (bleState !== State.PoweredOn) {
+    setScanError('Bluetooth is off. Please turn on Bluetooth and try again.');
+    return;
+  }
+
   clearDiscoveredDevices();
+  setScanError(null);
   setScanning(true);
 
   manager.startDeviceScan(
@@ -198,8 +200,8 @@ export async function scanForDevices() {
     { allowDuplicates: false },
     (error, device) => {
       if (error) {
-        console.error('[BLE] Scan error:', error.message);
         setScanning(false);
+        setScanError('Bluetooth is off. Please turn on Bluetooth and try again.');
         return;
       }
       if (device?.name?.startsWith(BLE_CONFIG.DEVICE_NAME_PREFIX)) {
@@ -222,6 +224,7 @@ export async function connectToDevice(device: Device) {
 
   try {
     const connected = await device.connect();
+    try { await connected.requestMTU(512); } catch { /* MTU negotiation optional */ }
     await connected.discoverAllServicesAndCharacteristics();
     useBleStore.getState().setConnectedDevice(connected);
     await setLastDeviceId(connected.id);
@@ -253,8 +256,7 @@ export async function connectToDevice(device: Device) {
     });
 
     return true;
-  } catch (err) {
-    console.error('[BLE] Connection failed:', err);
+  } catch {
     return false;
   }
 }

@@ -12,16 +12,15 @@ describe('bleHelpers', () => {
 
   it('parses base64 JSON device status payload', () => {
     const payload = Buffer.from(
-      JSON.stringify({ running: true, mode: 'SCRUB', speed: 'MED', pump: false, battery: 87 }),
+      JSON.stringify({ mainSpeed: 'MED', heelSpeed: 'LOW', pump: false, battery: 87 }),
       'utf-8'
     ).toString('base64');
 
     const status = parseDeviceStatus(payload);
 
     expect(status).toEqual({
-      isRunning: true,
-      mode: 'SCRUB',
-      speed: 'MED',
+      mainSpeed: 'MED',
+      heelSpeed: 'LOW',
       pumpActive: false,
       batteryLevel: 87,
     });

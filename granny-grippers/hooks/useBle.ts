@@ -7,6 +7,7 @@ export function useBle() {
   const deviceStatus = useBleStore((s) => s.deviceStatus);
   const connectedDevice = useBleStore((s) => s.connectedDevice);
   const discoveredDevices = useBleStore((s) => s.discoveredDevices);
+  const scanError = useBleStore((s) => s.scanError);
   const scan = useBleStore((s) => s.scan);
   const connectToDevice = useBleStore((s) => s.connectToDevice);
   const disconnect = useBleStore((s) => s.disconnect);
@@ -14,6 +15,7 @@ export function useBle() {
   return {
     isConnected,
     isScanning,
+    scanError,
     rssi,
     deviceStatus,
     connectedDevice,

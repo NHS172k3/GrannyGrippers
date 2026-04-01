@@ -1,25 +1,40 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, useColorScheme } from 'react-native';
 import { useBle } from '../../hooks/useBle';
+import { COLORS, DARK_COLORS } from '../../constants/theme';
 
 export default function ConnectionBadge() {
   const { isConnected } = useBle();
+  const t = useColorScheme() === 'dark' ? DARK_COLORS : COLORS;
 
   return (
     <View
-      className={`flex-row items-center px-3 py-1.5 rounded-full ${
-        isConnected ? 'bg-success-light' : 'bg-danger-light'
-      }`}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 999,
+        borderWidth: 1,
+        backgroundColor: isConnected ? t.successLight : t.dangerLight,
+        borderColor: isConnected ? t.success : t.danger,
+      }}
     >
       <View
-        className={`w-2 h-2 rounded-full mr-1.5 ${
-          isConnected ? 'bg-success' : 'bg-danger'
-        }`}
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: 4,
+          marginRight: 6,
+          backgroundColor: isConnected ? t.success : t.danger,
+        }}
       />
       <Text
-        className={`text-xs font-nunito-semibold ${
-          isConnected ? 'text-success' : 'text-danger'
-        }`}
+        style={{
+          fontFamily: 'Nunito_700Bold',
+          fontSize: 13,
+          color: isConnected ? t.success : t.danger,
+        }}
       >
         {isConnected ? 'Connected' : 'Disconnected'}
       </Text>

@@ -1,46 +1,70 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View, useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COMMANDS, type Command } from '../../constants/ble';
 import { useBle } from '../../hooks/useBle';
 import { useDeviceCommands } from '../../hooks/useDeviceCommands';
-import { COLORS } from '../../constants/theme';
-
-type ActionLabel = 'Start' | 'Pause' | 'Stop';
-
-const ACTIONS: { label: ActionLabel; icon: React.ComponentProps<typeof Ionicons>['name']; command: Command; colorClass: string; textClass: string }[] = [
-  { label: 'Start', icon: 'play-circle', command: COMMANDS.START, colorClass: 'bg-success-light', textClass: 'text-success' },
-  { label: 'Pause', icon: 'pause-circle', command: COMMANDS.PAUSE, colorClass: 'bg-warning-light', textClass: 'text-warning' },
-  { label: 'Stop', icon: 'stop-circle', command: COMMANDS.STOP, colorClass: 'bg-danger-light', textClass: 'text-danger' },
-];
-
-const ACTION_COLORS = {
-  Start: COLORS.success,
-  Pause: COLORS.warning,
-  Stop: COLORS.danger,
-} as const;
+import { COLORS, DARK_COLORS } from '../../constants/theme';
 
 export default function QuickActions() {
   const { isConnected } = useBle();
   const { sendCommand } = useDeviceCommands();
+  const t = useColorScheme() === 'dark' ? DARK_COLORS : COLORS;
+
+  const ACTIONS = [
+    {
+      label:     'Start',
+      icon:      'play-circle'  as const,
+      command:   COMMANDS.START,
+      bgColor:   t.successLight,
+      textColor: t.success,
+      iconColor: t.success,
+      border:    t.success,
+    },
+    {
+      label:     'Stop',
+      icon:      'stop-circle'  as const,
+      command:   COMMANDS.STOP,
+      bgColor:   t.dangerLight,
+      textColor: t.danger,
+      iconColor: t.danger,
+      border:    t.danger,
+    },
+  ];
 
   return (
     <View className="mb-4">
-      <Text className="text-xs font-nunito-bold uppercase tracking-widest text-text-muted mb-2 px-1">
+      <Text className="text-sm font-nunito-bold uppercase tracking-widest text-text-muted dark:text-dark-text-muted mb-3 px-1">
         Quick Actions
       </Text>
       <View className="flex-row gap-3">
         {ACTIONS.map((action) => (
           <Pressable
             key={action.label}
-            onPress={() => sendCommand(action.command)}
+            onPress={() => sendCommand(action.command as Command)}
             disabled={!isConnected}
-            className={`flex-1 rounded-2xl p-3.5 items-center border border-gg-border ${action.colorClass} ${
-              isConnected ? '' : 'opacity-45'
-            }`}
+            style={{
+              flex: 1,
+              borderRadius: 16,
+              paddingVertical: 16,
+              alignItems: 'center',
+              borderWidth: 1,
+              backgroundColor: action.bgColor,
+              borderColor: action.border,
+              opacity: isConnected ? 1 : 0.4,
+            }}
           >
-            <Ionicons name={action.icon} size={24} color={ACTION_COLORS[action.label]} />
-            <Text className={`mt-1 text-sm font-nunito-bold ${action.textClass}`}>{action.label}</Text>
+            <Ionicons name={action.icon} size={34} color={action.iconColor} />
+            <Text
+              style={{
+                marginTop: 6,
+                fontSize: 16,
+                fontFamily: 'Nunito_700Bold',
+                color: action.textColor,
+              }}
+            >
+              {action.label}
+            </Text>
           </Pressable>
         ))}
       </View>

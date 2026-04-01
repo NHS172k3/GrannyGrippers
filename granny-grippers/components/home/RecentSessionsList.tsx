@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import Card from '../ui/Card';
 import { useSessionStore } from '../../stores/sessionStore';
 import { formatDuration } from '../../hooks/useSessions';
+import { SPEED_DISPLAY } from '../../types';
 
 export default function RecentSessionsList() {
   const allSessions = useSessionStore((s) => s.sessions);
@@ -10,27 +11,29 @@ export default function RecentSessionsList() {
 
   return (
     <View>
-      <Text className="text-xs font-nunito-bold uppercase tracking-widest text-text-muted mb-2 px-1">
+      <Text className="text-sm font-nunito-bold uppercase tracking-widest text-text-muted dark:text-dark-text-muted mb-3 px-1">
         Recent Sessions
       </Text>
       {sessions.length === 0 ? (
         <Card>
-          <Text className="font-nunito-medium text-text-secondary">No sessions recorded yet.</Text>
+          <Text className="text-base font-nunito-medium text-text-primary dark:text-dark-text-primary">
+            No sessions recorded yet.
+          </Text>
         </Card>
       ) : (
         <View className="gap-3">
           {sessions.map((session) => (
             <Card key={session.id}>
               <View className="flex-row items-center justify-between">
-                <View>
-                  <Text className="text-base font-nunito-bold text-text-primary">
-                    {session.mode || 'Mode Unset'} / {session.speed || 'Speed Unset'}
+                <View className="flex-1 mr-3">
+                  <Text className="text-base font-nunito-bold text-text-primary dark:text-dark-text-primary">
+                    Sole: {SPEED_DISPLAY[session.mainSpeed ?? 'OFF'] ?? 'Off'} · Heel: {SPEED_DISPLAY[session.heelSpeed ?? 'OFF'] ?? 'Off'}
                   </Text>
-                  <Text className="text-xs font-nunito-medium text-text-muted mt-1">
+                  <Text className="text-sm font-nunito-medium text-text-muted dark:text-dark-text-muted mt-1">
                     {new Date(session.startedAt).toLocaleString()}
                   </Text>
                 </View>
-                <Text className="text-base font-nunito-bold text-brand">
+                <Text className="text-lg font-nunito-bold text-brand">
                   {formatDuration(session.durationSeconds)}
                 </Text>
               </View>

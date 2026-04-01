@@ -10,17 +10,31 @@ export const BLE_CONFIG = {
 } as const;
 
 export const COMMANDS = {
+  // Global
   START: 'CMD:START',
-  STOP: 'CMD:STOP',
-  PAUSE: 'CMD:PAUSE',
-  SPEED_LOW: 'CMD:SPEED:LOW',
-  SPEED_MEDIUM: 'CMD:SPEED:MED',
-  SPEED_HIGH: 'CMD:SPEED:HIGH',
-  MODE_SCRUB: 'CMD:MODE:SCRUB',
-  MODE_MASSAGE: 'CMD:MODE:MASSAGE',
-  MODE_RINSE: 'CMD:MODE:RINSE',
-  PUMP_ON: 'CMD:PUMP:ON',
+  STOP:  'CMD:STOP',
+
+  // One-tap program presets
+  MODE_SCRUB:   'CMD:MODE:SCRUB',    // Deep Clean  → Sole: Power, Heel: Power
+  MODE_MASSAGE: 'CMD:MODE:MASSAGE',  // Massage     → Sole: Gentle, Heel: Gentle
+  MODE_RINSE:   'CMD:MODE:RINSE',    // Rinse       → Sole: Gentle, Heel: Off
+
+  // Sole (main motor) per-speed
+  SOLE_OFF:     'CMD:MAIN:OFF',
+  SOLE_GENTLE:  'CMD:MAIN:LOW',
+  SOLE_STANDARD:'CMD:MAIN:MED',
+  SOLE_POWER:   'CMD:MAIN:HIGH',
+
+  // Heel (heel motor) per-speed
+  HEEL_OFF:     'CMD:HEEL:OFF',
+  HEEL_GENTLE:  'CMD:HEEL:LOW',
+  HEEL_STANDARD:'CMD:HEEL:MED',
+  HEEL_POWER:   'CMD:HEEL:HIGH',
+
+  // Pump
+  PUMP_ON:  'CMD:PUMP:ON',
   PUMP_OFF: 'CMD:PUMP:OFF',
+
   STATUS: 'CMD:STATUS',
 } as const;
 
